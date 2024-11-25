@@ -1,0 +1,175 @@
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: ../organizations/ordererOrganizations/voting.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer.voting.com:7050
+  - &votingBooth
+    Name: votingBoothMSP
+    ID: votingBoothMSP
+    MSPDir: ../organizations/peerOrganizations/votingBooth.voting.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('votingBoothMSP.admin', 'votingBoothMSP.peer', 'votingBoothMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('votingBoothMSP.admin', 'votingBoothMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('votingBoothMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('votingBoothMSP.peer')"
+  - &commissioner
+    Name: commissionerMSP
+    ID: commissionerMSP
+    MSPDir: ../organizations/peerOrganizations/commissioner.voting.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('commissionerMSP.admin', 'commissionerMSP.peer', 'commissionerMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('commissionerMSP.admin', 'commissionerMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('commissionerMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('commissionerMSP.peer')"
+  - &auditor
+    Name: auditorMSP
+    ID: auditorMSP
+    MSPDir: ../organizations/peerOrganizations/auditor.voting.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('auditorMSP.admin', 'auditorMSP.peer', 'auditorMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('auditorMSP.admin', 'auditorMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('auditorMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('auditorMSP.peer')"
+  - &voterRegistrationAuthority
+    Name: voterRegistrationAuthorityMSP
+    ID: voterRegistrationAuthorityMSP
+    MSPDir: ../organizations/peerOrganizations/voterRegistrationAuthority.voting.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('voterRegistrationAuthorityMSP.admin', 'voterRegistrationAuthorityMSP.peer', 'voterRegistrationAuthorityMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('voterRegistrationAuthorityMSP.admin', 'voterRegistrationAuthorityMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('voterRegistrationAuthorityMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('voterRegistrationAuthorityMSP.peer')"
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_5: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  Addresses:
+    - orderer.voting.com:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+Profiles:
+  ChannelUsingRaft:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      OrdererType: etcdraft
+      EtcdRaft:
+        Consenters:
+          - Host: orderer.voting.com
+            Port: 7050
+            ClientTLSCert: ../organizations/ordererOrganizations/voting.com/orderers/orderer.voting.com/tls/server.crt
+            ServerTLSCert: ../organizations/ordererOrganizations/voting.com/orderers/orderer.voting.com/tls/server.crt
+      Organizations:
+        - *OrdererOrg
+      Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *votingBooth
+        - *commissioner
+        - *auditor
+        - *voterRegistrationAuthority
+      Capabilities: *ApplicationCapabilities

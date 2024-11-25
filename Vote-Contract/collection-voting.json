@@ -1,0 +1,11 @@
+[
+  {
+    "name": "VoterCollection",
+    "policy": "OR('auditorMSP.member', 'voterRegistrationAuthorityMSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 1,
+    "blockToLive": 100,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true
+  }
+]
