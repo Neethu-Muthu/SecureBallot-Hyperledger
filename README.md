@@ -67,6 +67,7 @@ By leveraging **chaincode** and **CouchDB** for advanced queries, this system of
    git clone https://github.com/yourusername/fabric-network-voting.git
    cd fabric-network-voting
    for start the network you can use ./startNetwork.sh
+   After starting the network you can run frontend application : for backend you can use node app.js and for ui part npm run dev
    for stop the network you can use ./stopNetwork.sh
    bash```
    ````
