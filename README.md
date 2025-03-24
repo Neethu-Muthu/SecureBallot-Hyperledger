@@ -4,6 +4,9 @@
 
 ## 📖 Overview
 
+![Home Screen](https://raw.githubusercontent.com/your-username/repo-name/main/ui/src/assets/images/Screenshot-from-2025-03-24-16-56-00.png)
+
+
 The **SecureBallot** is a **secure** and **transparent** voting platform built on **Hyperledger Fabric**, a leading open-source enterprise blockchain framework. This application empowers users to participate in elections and decision-making processes while ensuring the integrity and confidentiality of votes through blockchain technology.
 
 ---
