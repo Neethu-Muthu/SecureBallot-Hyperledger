@@ -4,7 +4,8 @@
 
 ## 📖 Overview
 
-![Home Screen](![Home Screen](https://github.com/Neethu-Muthu/SecureBallot-Hyperledger/VoteApp/ui/src/assets/images/Screenshot from 2025-03-24 16-56-00.png.).
+![Home Screen](https://raw.githubusercontent.com/Neethu-Muthu/Fabric_Voting_System/main/VoteApp/ui/src/assets/images/voteapp.png)
+
 
 
 
